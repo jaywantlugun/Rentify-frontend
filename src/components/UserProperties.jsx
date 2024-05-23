@@ -72,7 +72,7 @@ const UserProperties = () => {
                 {properties.map(property => (
                     <Grid item xs={12} md={6} key={property.id}>
                         <Paper elevation={3} sx={{ padding: 2 }}>
-                            <img src={property.imageUrl} alt={property.rent} style={{ maxWidth: '100%', marginBottom: '8px' }} />
+                            <img src={`data:image/png;base64, ${property.propertyImage}`} alt={property.rent} style={{ maxWidth: '100%', marginBottom: '8px' }} />
                             {editing === property.id ? (
                                 <Box component="form" sx={{ display: 'flex', flexDirection: 'column' }}>
                                     <TextField

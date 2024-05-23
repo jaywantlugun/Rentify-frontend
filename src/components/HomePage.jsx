@@ -199,7 +199,7 @@ const HomePage = () => {
                                         <CardMedia
                                             component="img"
                                             height="140"
-                                            image={property.imageUrl || 'https://placehold.co/400'}
+                                            image={`data:image/png;base64, ${property.propertyImage}` || 'https://placehold.co/400'}
                                             alt={property.rent}
                                         />
                                         <CardContent>

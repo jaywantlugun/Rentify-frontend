@@ -11,4 +11,4 @@ export const executeJwtSignupService
     
 export const fetchAllProperties
     = ()=>
-        apiClient.get("properties/all")
+        apiClient.get("/properties/all")

@@ -31,6 +31,14 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    // Validation: Check if the password length is less than 8 characters
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      setLoading(false); // Stop loading
+      return; // Exit early
+    }
+
     try {
       const success = await authContext.signup(formData.firstName, formData.lastName, formData.email, formData.password, formData.phoneNumber);
       if (success) {
