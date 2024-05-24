@@ -59,9 +59,7 @@ const HomePage = () => {
         navigate({ search: queryString.stringify(newParams) });
     };
 
-
     const sendEmail = (ownerId) => {
-
         apiClient.post('/send-email', null, {
             params: {
                 userId: userId,
@@ -74,18 +72,13 @@ const HomePage = () => {
             .catch((error) => {
                 console.error('There was an error while sending Email!', error);
             });
-
-    }
-
-
+    };
 
     const handleInterested = (property) => {
-
-        if(localStorage.getItem("user_id")===null){
-            navigate("/login")
+        if (localStorage.getItem("user_id") === null) {
+            navigate("/login");
             return;
-        } 
-
+        }
 
         apiClient.post('/properties/apply', null, {
             params: {
@@ -104,18 +97,14 @@ const HomePage = () => {
                 console.error('There was an error applying for the property!', error);
             });
 
-
-
-
         console.log(`User is interested in property with ID: ${property.id}`);
     };
 
     const handleLike = (propertyId) => {
-
-        if(localStorage.getItem("user_id")===null){
-            navigate("/login")
+        if (localStorage.getItem("user_id") === null) {
+            navigate("/login");
             return;
-        } 
+        }
 
         const property = properties.find(prop => prop.id === propertyId);
         if (hasLiked(property)) {
@@ -196,12 +185,29 @@ const HomePage = () => {
                             {properties.map((property) => (
                                 <Grid item xs={12} sm={6} md={4} key={property.id}>
                                     <Card>
-                                        <CardMedia
-                                            component="img"
-                                            height="140"
-                                            image={`data:image/png;base64, ${property.propertyImage}` || 'https://placehold.co/400'}
-                                            alt={property.rent}
-                                        />
+                                        <Box sx={{ position: 'relative', height: 140, backgroundColor: '#f0f0f0' }}>
+                                            <img
+                                                srcSet={`
+                                                    data:image/png;base64, ${property.propertyImage_small} 600w,
+                                                    data:image/png;base64, ${property.propertyImage_medium} 1200w,
+                                                    data:image/png;base64, ${property.propertyImage_large} 1800w
+                                                `}
+                                                sizes="(max-width: 600px) 600px,
+                                                       (max-width: 1200px) 1200px,
+                                                       1800px"
+                                                src={`data:image/png;base64, ${property.propertyImage}` || 'https://placehold.co/400'}
+                                                alt={property.rent}
+                                                loading="lazy"
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover',
+                                                }}
+                                            />
+                                        </Box>
                                         <CardContent>
                                             <Typography gutterBottom variant="h5" component="div">
                                                 ₹{property.rent} / month
@@ -264,7 +270,6 @@ const HomePage = () => {
                     </Typography>
                 </Box>
             </Modal>
-
         </div>
     );
 };
