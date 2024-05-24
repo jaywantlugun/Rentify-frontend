@@ -1,12 +1,12 @@
 import React from 'react';
-import { Box, Container, Grid, Typography, Link, IconButton } from '@mui/material';
+import { Box, Container, Grid, Typography, IconButton } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import DescriptionIcon from '@mui/icons-material/Description';
 
 const FooterComponent = () => {
     return (
-        <Box sx={{ bgcolor: 'black', color: 'white', py: 2, position: 'fixed', bottom: 0, width: '100%' }}>
+        <Box sx={{ bgcolor: 'black', color: 'white', py: 2, mt: 'auto' }}>
             <Container maxWidth="lg">
                 <Grid container spacing={2} justifyContent="center">
                     <Grid item xs={12} textAlign="center">
@@ -17,9 +17,15 @@ const FooterComponent = () => {
                             <IconButton href="mailto:jaywantlugun2000@gmail.com" color="inherit" size="large">
                                 <EmailIcon />
                             </IconButton>
+                            <Typography variant="h6" noWrap sx={{ mx: '2px' }}>
+                                |
+                            </Typography>
                             <IconButton href="https://www.linkedin.com/in/jaywant-lugun/" target="_blank" color="inherit" size="large">
                                 <LinkedInIcon />
                             </IconButton>
+                            <Typography variant="h6" noWrap sx={{ mx: '2px' }}>
+                                |
+                            </Typography>
                             <IconButton href="https://drive.google.com/file/d/1-5hFzuORS31BPv-VCIaQqHrCjm9nNBPW/view?usp=sharing" target="_blank" color="inherit" size="large">
                                 <DescriptionIcon />
                             </IconButton>
