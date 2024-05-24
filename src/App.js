@@ -9,6 +9,7 @@ import ApplyProperty from "./components/ApplyProperty";
 import HomePage from "./components/HomePage";
 import Navbar from "./components/Navbar";
 import UserProperties from "./components/UserProperties";
+import FooterComponent from "./components/FooterComponent";
 
 function AuthenticatedRoute({ children }) {
   const authContext = useAuth();
@@ -49,6 +50,7 @@ function App() {
           } />
 
         </Routes>
+        <FooterComponent/>
       </Router>
     </AuthProvider>
     </div>

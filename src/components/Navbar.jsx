@@ -49,7 +49,7 @@ const Navbar = () => {
 
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ my: 2 }}>
+            <Typography variant="h6" sx={{ my: 2 ,fontWeight: 'bold', fontFamily: 'sans-serif',  color: 'black'}}>
                 Rentify
             </Typography>
             <List>
@@ -92,9 +92,13 @@ const Navbar = () => {
                 >
                     <MenuIcon />
                 </IconButton>
-                <Typography variant="h6" noWrap onClick={handleHomeClick} sx={{ cursor: 'pointer', display: { xs: 'none', sm: 'block' } }}>
+                <Typography variant="h6" noWrap onClick={handleHomeClick} sx={{ cursor: 'pointer', display: { xs: 'none', sm: 'block' } ,fontSize:'1.5rem' ,fontWeight: 'bold', fontFamily: 'sans-serif',  color: 'white'} }>
                     Rentify
                 </Typography>
+                <Typography variant="h6" noWrap sx={{ display: { xs: 'none', sm: 'block' }, ml: '10px', mr: '10px' }}>
+                    |
+                </Typography>
+
                 <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
                     <Button color="inherit" onClick={handleMyPropertiesClick} startIcon={<HomeOutlinedIcon />}>
                         My Properties
