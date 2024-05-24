@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Box, Paper, Container, FormControl, InputLabel, Select, MenuItem, Typography, IconButton, Button, Card, CardContent, CardActions, Modal } from '@mui/material';
+import { Grid, Box, Paper, Container, FormControl, InputLabel, Select, MenuItem, Typography, IconButton, Button, Card, CardContent, CardActions, Modal, CircularProgress } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import BathtubIcon from '@mui/icons-material/Bathtub';
@@ -16,12 +16,14 @@ const HomePage = () => {
 
     const [properties, setProperties] = useState([]);
     const [totalPages, setTotalPages] = useState(5); // Adjust this value based on your API response
+    const [loading, setLoading] = useState(false); // State for loading spinner
     const [openModal, setOpenModal] = useState(false);
     const [selectedOwner, setSelectedOwner] = useState(null);
 
     const userId = parseInt(localStorage.getItem("user_id"));
 
     const fetchData = () => {
+        setLoading(true); // Show loading spinner
         apiClient.get('/properties/all', {
             params: {
                 pageNo: pageNo ? pageNo - 1 : 0,
@@ -35,9 +37,11 @@ const HomePage = () => {
                 } else {
                     console.error('API response is not an array:', response.data);
                 }
+                setLoading(false); // Hide loading spinner
             })
             .catch(error => {
                 console.error('There was an error fetching the properties!', error);
+                setLoading(false); // Hide loading spinner
             });
     };
 
@@ -176,62 +180,68 @@ const HomePage = () => {
                         <Typography variant="h6">Properties</Typography>
                         <PaginationComponent totalPages={totalPages} currentPage={pageNo || 1} />
                     </Box>
-                    <Grid container spacing={3}>
-                        {properties.map((property) => (
-                            <Grid item xs={12} sm={6} md={4} key={property.id}>
-                                <Card>
-                                    <Box sx={{ position: 'relative', height: 140, backgroundColor: '#f0f0f0' }}>
-                                        <img
-                                            src={`data:image/png;base64,${property.propertyImage}`}
-                                            alt={property.rent}
-                                            loading="lazy"
-                                            style={{
-                                                position: 'absolute',
-                                                top: 0,
-                                                left: 0,
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover',
-                                            }}
-                                            onError={(e) => e.target.src = 'https://placehold.co/400'}
-                                        />
-                                    </Box>
-                                    <CardContent>
-                                        <Typography gutterBottom variant="h5" component="div">
-                                            ₹{property.rent} / month
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            <LocationOnIcon fontSize="small" /> {property.area}
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            <KingBedIcon fontSize="small" /> {property.bedrooms} Bedrooms
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            <BathtubIcon fontSize="small" /> {property.bathrooms}
-                                        </Typography>
-                                    </CardContent>
-                                    <CardActions sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        {property.owner.id === userId ? (
-                                            <Button size="small">You are the Owner</Button>
-                                        ) : isApplied(property) ? (
-                                            <Button size="small">Already Applied</Button>
-                                        ) : (
-                                            <Button size="small" onClick={() => handleInterested(property)}>Interested</Button>
-                                        )}
-                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Typography>{property.likedUsers.length}</Typography>
-                                            <IconButton
-                                                aria-label="add to favorites"
-                                                onClick={() => handleLike(property.id)}
-                                            >
-                                                <FavoriteIcon color={hasLiked(property) ? "error" : "inherit"} />
-                                            </IconButton>
+                    {loading ? (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <Grid container spacing={3}>
+                            {properties.map((property) => (
+                                <Grid item xs={12} sm={6} md={4} key={property.id}>
+                                    <Card>
+                                        <Box sx={{ position: 'relative', height: 140, backgroundColor: '#f0f0f0' }}>
+                                            <img
+                                                src={`data:image/png;base64,${property.propertyImage}`}
+                                                alt={property.rent}
+                                                loading="lazy"
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover',
+                                                }}
+                                                onError={(e) => e.target.src = 'https://placehold.co/400'}
+                                            />
                                         </Box>
-                                    </CardActions>
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
+                                        <CardContent>
+                                            <Typography gutterBottom variant="h5" component="div">
+                                                ₹{property.rent} / month
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                <LocationOnIcon fontSize="small" /> {property.area}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                <KingBedIcon fontSize="small" /> {property.bedrooms} Bedrooms
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                <BathtubIcon fontSize="small" /> {property.bathrooms}
+                                            </Typography>
+                                        </CardContent>
+                                        <CardActions sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            {property.owner.id === userId ? (
+                                                <Button size="small">You are the Owner</Button>
+                                            ) : isApplied(property) ? (
+                                                <Button size="small">Already Applied</Button>
+                                            ) : (
+                                                <Button size="small" onClick={() => handleInterested(property)}>Interested</Button>
+                                            )}
+                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <Typography>{property.likedUsers.length}</Typography>
+                                                <IconButton
+                                                    aria-label="add to favorites"
+                                                    onClick={() => handleLike(property.id)}
+                                                >
+                                                    <FavoriteIcon color={hasLiked(property) ? "error" : "inherit"} />
+                                                </IconButton>
+                                            </Box>
+                                        </CardActions>
+                                    </Card>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    )}
                 </Grid>
             </Grid>
 
