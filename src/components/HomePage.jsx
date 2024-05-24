@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Box, Paper, Container, FormControl, InputLabel, Select, MenuItem, Typography, IconButton, Button, Card, CardContent, CardActions, CardMedia, Modal } from '@mui/material';
+import { Grid, Box, Paper, Container, FormControl, InputLabel, Select, MenuItem, Typography, IconButton, Button, Card, CardContent, CardActions, Modal } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import BathtubIcon from '@mui/icons-material/Bathtub';
@@ -187,15 +187,7 @@ const HomePage = () => {
                                     <Card>
                                         <Box sx={{ position: 'relative', height: 140, backgroundColor: '#f0f0f0' }}>
                                             <img
-                                                srcSet={`
-                                                    data:image/png;base64, ${property.propertyImage_small} 600w,
-                                                    data:image/png;base64, ${property.propertyImage_medium} 1200w,
-                                                    data:image/png;base64, ${property.propertyImage_large} 1800w
-                                                `}
-                                                sizes="(max-width: 600px) 600px,
-                                                       (max-width: 1200px) 1200px,
-                                                       1800px"
-                                                src={`data:image/png;base64, ${property.propertyImage}` || 'https://placehold.co/400'}
+                                                src={`data:image/png;base64,${property.propertyImage}`}
                                                 alt={property.rent}
                                                 loading="lazy"
                                                 style={{
@@ -206,6 +198,7 @@ const HomePage = () => {
                                                     height: '100%',
                                                     objectFit: 'cover',
                                                 }}
+                                                onError={(e) => e.target.src = 'https://placehold.co/400'}
                                             />
                                         </Box>
                                         <CardContent>
