@@ -70,9 +70,23 @@ const UserProperties = () => {
             </Typography>
             <Grid container spacing={2}>
                 {properties.map(property => (
-                    <Grid item xs={12} md={6} key={property.id}>
+                    <Grid item xs={12} sm={6} md={4} key={property.id}>
                         <Paper elevation={3} sx={{ padding: 2 }}>
-                            <img src={`data:image/png;base64, ${property.propertyImage}`} alt={property.rent} style={{ maxWidth: '100%', marginBottom: '8px' }} />
+                            <Box sx={{ position: 'relative', minHeight: 200, marginBottom: '8px' }}>
+                                <img
+                                    src={`data:image/png;base64, ${property.propertyImage}`}
+                                    alt={property.rent}
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                    }}
+                                    loading="lazy"
+                                />
+                            </Box>
                             {editing === property.id ? (
                                 <Box component="form" sx={{ display: 'flex', flexDirection: 'column' }}>
                                     <TextField

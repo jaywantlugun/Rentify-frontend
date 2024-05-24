@@ -22,17 +22,13 @@ const HomePage = () => {
     const userId = parseInt(localStorage.getItem("user_id"));
 
     const fetchData = () => {
-        console.log("Fetching properties...");
-        console.log("page no = " + pageNo);
-
         apiClient.get('/properties/all', {
             params: {
-                pageNo: (pageNo - 1 || 0),
+                pageNo: pageNo ? pageNo - 1 : 0,
                 sortBy: sortBy || ''
             }
         })
             .then(response => {
-                console.log("Response:", response.data);
                 if (Array.isArray(response.data.properties)) {
                     setProperties(response.data.properties);
                     setTotalPages(response.data.totalPages); // Adjust based on API response
@@ -154,92 +150,90 @@ const HomePage = () => {
     };
 
     return (
-        <div>
-            <Container maxWidth="lg">
-                <Grid container spacing={2} sx={{ mt: 3 }}>
-                    <Grid item xs={3}>
-                        <Paper sx={{ p: 2 }}>
-                            <Typography variant="h6">Filters</Typography>
-                            <FormControl fullWidth sx={{ mt: 2 }}>
-                                <InputLabel id="sort-by-label">Sort By</InputLabel>
-                                <Select
-                                    labelId="sort-by-label"
-                                    id="sort-by"
-                                    value={sortBy || ''}
-                                    label="Sort By"
-                                    onChange={handleSortChange}
-                                >
-                                    <MenuItem value=""><em>None</em></MenuItem>
-                                    <MenuItem value="likes">Likes</MenuItem>
-                                    <MenuItem value="rent">Rent</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={9}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                            <Typography variant="h6">Properties</Typography>
-                            <PaginationComponent totalPages={totalPages} currentPage={pageNo || 1} />
-                        </Box>
-                        <Grid container spacing={3}>
-                            {properties.map((property) => (
-                                <Grid item xs={12} sm={6} md={4} key={property.id}>
-                                    <Card>
-                                        <Box sx={{ position: 'relative', height: 140, backgroundColor: '#f0f0f0' }}>
-                                            <img
-                                                src={`data:image/png;base64,${property.propertyImage}`}
-                                                alt={property.rent}
-                                                loading="lazy"
-                                                style={{
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    left: 0,
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    objectFit: 'cover',
-                                                }}
-                                                onError={(e) => e.target.src = 'https://placehold.co/400'}
-                                            />
+        <Container maxWidth="lg">
+            <Grid container spacing={2} sx={{ mt: 3 }}>
+                <Grid item xs={12} md={3}>
+                    <Paper sx={{ p: 2 }}>
+                        <Typography variant="h6">Filters</Typography>
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                            <InputLabel id="sort-by-label">Sort By</InputLabel>
+                            <Select
+                                labelId="sort-by-label"
+                                id="sort-by"
+                                value={sortBy || ''}
+                                label="Sort By"
+                                onChange={handleSortChange}
+                            >
+                                <MenuItem value=""><em>None</em></MenuItem>
+                                <MenuItem value="likes">Likes</MenuItem>
+                                <MenuItem value="rent">Rent</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} md={9}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Typography variant="h6">Properties</Typography>
+                        <PaginationComponent totalPages={totalPages} currentPage={pageNo || 1} />
+                    </Box>
+                    <Grid container spacing={3}>
+                        {properties.map((property) => (
+                            <Grid item xs={12} sm={6} md={4} key={property.id}>
+                                <Card>
+                                    <Box sx={{ position: 'relative', height: 140, backgroundColor: '#f0f0f0' }}>
+                                        <img
+                                            src={`data:image/png;base64,${property.propertyImage}`}
+                                            alt={property.rent}
+                                            loading="lazy"
+                                            style={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'cover',
+                                            }}
+                                            onError={(e) => e.target.src = 'https://placehold.co/400'}
+                                        />
+                                    </Box>
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" component="div">
+                                            ₹{property.rent} / month
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            <LocationOnIcon fontSize="small" /> {property.area}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            <KingBedIcon fontSize="small" /> {property.bedrooms} Bedrooms
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            <BathtubIcon fontSize="small" /> {property.bathrooms}
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        {property.owner.id === userId ? (
+                                            <Button size="small">You are the Owner</Button>
+                                        ) : isApplied(property) ? (
+                                            <Button size="small">Already Applied</Button>
+                                        ) : (
+                                            <Button size="small" onClick={() => handleInterested(property)}>Interested</Button>
+                                        )}
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <Typography>{property.likedUsers.length}</Typography>
+                                            <IconButton
+                                                aria-label="add to favorites"
+                                                onClick={() => handleLike(property.id)}
+                                            >
+                                                <FavoriteIcon color={hasLiked(property) ? "error" : "inherit"} />
+                                            </IconButton>
                                         </Box>
-                                        <CardContent>
-                                            <Typography gutterBottom variant="h5" component="div">
-                                                ₹{property.rent} / month
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <LocationOnIcon fontSize="small" /> {property.area}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <KingBedIcon fontSize="small" /> {property.bedrooms} Bedrooms
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <BathtubIcon fontSize="small" /> {property.bathrooms}
-                                            </Typography>
-                                        </CardContent>
-                                        <CardActions sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            {property.owner.id === userId ? (
-                                                <Button size="small">You are the Owner</Button>
-                                            ) : isApplied(property) ? (
-                                                <Button size="small">Already Applied</Button>
-                                            ) : (
-                                                <Button size="small" onClick={() => handleInterested(property)}>Interested</Button>
-                                            )}
-                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                <Typography>{property.likedUsers.length}</Typography>
-                                                <IconButton
-                                                    aria-label="add to favorites"
-                                                    onClick={() => handleLike(property.id)}
-                                                >
-                                                    <FavoriteIcon color={hasLiked(property) ? "error" : "inherit"} />
-                                                </IconButton>
-                                            </Box>
-                                        </CardActions>
-                                    </Card>
-                                </Grid>
-                            ))}
-                        </Grid>
+                                    </CardActions>
+                                </Card>
+                            </Grid>
+                        ))}
                     </Grid>
                 </Grid>
-            </Container>
+            </Grid>
 
             <Modal
                 open={openModal}
@@ -263,7 +257,7 @@ const HomePage = () => {
                     </Typography>
                 </Box>
             </Modal>
-        </div>
+        </Container>
     );
 };
 

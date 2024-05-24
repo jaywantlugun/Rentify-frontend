@@ -1,54 +1,15 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Box, Button, Menu, MenuItem, IconButton } from '@mui/material';
-import { styled, alpha } from '@mui/material/styles';
-import SearchIcon from '@mui/icons-material/Search';
-import InputBase from '@mui/material/InputBase';
+import { AppBar, Toolbar, Typography, Box, Button, Menu, MenuItem, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useAuth } from '../security/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-        backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-    },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    '& .MuiInputBase-input': {
-        padding: theme.spacing(1, 1, 1, 0),
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('md')]: {
-            width: '20ch',
-        },
-    },
-}));
-
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
+    const [mobileOpen, setMobileOpen] = useState(false);
     const auth = useAuth();
     const navigate = useNavigate();
 
@@ -82,30 +43,66 @@ const Navbar = () => {
         navigate('/login');
     };
 
+    const handleDrawerToggle = () => {
+        setMobileOpen(!mobileOpen);
+    };
+
+    const drawer = (
+        <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+            <Typography variant="h6" sx={{ my: 2 }}>
+                Rentify
+            </Typography>
+            <List>
+                <ListItem button onClick={handleHomeClick}>
+                    <ListItemText primary="Home" />
+                </ListItem>
+                <ListItem button onClick={handleMyPropertiesClick}>
+                    <ListItemText primary="My Properties" />
+                </ListItem>
+                <ListItem button onClick={handlePostPropertyClick}>
+                    <ListItemText primary="Post Property" />
+                </ListItem>
+                {auth.isAuthenticated ? (
+                    <>
+                        <ListItem button onClick={handleProfileMenuOpen}>
+                            <ListItemText primary="Profile" />
+                        </ListItem>
+                        <ListItem button onClick={handleLogout}>
+                            <ListItemText primary="Sign Out" />
+                        </ListItem>
+                    </>
+                ) : (
+                    <ListItem button onClick={handleSignInClick}>
+                        <ListItemText primary="Sign In" />
+                    </ListItem>
+                )}
+            </List>
+        </Box>
+    );
+
     return (
         <AppBar position="static">
             <Toolbar>
-                <Typography variant="h6" noWrap onClick={handleHomeClick} sx={{ cursor: 'pointer' }}>
+                <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    edge="start"
+                    onClick={handleDrawerToggle}
+                    sx={{ mr: 2, display: { sm: 'none' } }}
+                >
+                    <MenuIcon />
+                </IconButton>
+                <Typography variant="h6" noWrap onClick={handleHomeClick} sx={{ cursor: 'pointer', display: { xs: 'none', sm: 'block' } }}>
                     Rentify
                 </Typography>
-                <Search>
-                    <SearchIconWrapper>
-                        <SearchIcon />
-                    </SearchIconWrapper>
-                    <StyledInputBase
-                        placeholder="Search…"
-                        inputProps={{ 'aria-label': 'search' }}
-                    />
-                </Search>
-                <Box sx={{ flexGrow: 1 }} />
-                {/* My Properties Button with Home icon */}
-                <Button onClick={handleMyPropertiesClick} color="inherit" startIcon={<HomeOutlinedIcon />}>
-                    My Properties
-                </Button>
-                {/* Post Properties Button with Add icon */}
-                <Button onClick={handlePostPropertyClick} color="inherit" startIcon={<AddOutlinedIcon />}>
-                    Post Property
-                </Button>
+                <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
+                    <Button color="inherit" onClick={handleMyPropertiesClick} startIcon={<HomeOutlinedIcon />}>
+                        My Properties
+                    </Button>
+                    <Button color="inherit" onClick={handlePostPropertyClick} startIcon={<AddOutlinedIcon />}>
+                        Post Property
+                    </Button>
+                </Box>
                 {auth.isAuthenticated ? (
                     <>
                         <IconButton
@@ -142,6 +139,20 @@ const Navbar = () => {
                     <Button color="inherit" onClick={handleSignInClick}>Sign In</Button>
                 )}
             </Toolbar>
+            <Drawer
+                variant="temporary"
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+                ModalProps={{
+                    keepMounted: true, // Better open performance on mobile.
+                }}
+                sx={{
+                    display: { xs: 'block', sm: 'none' },
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
+                }}
+            >
+                {drawer}
+            </Drawer>
         </AppBar>
     );
 };
